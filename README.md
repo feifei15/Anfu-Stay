@@ -1,2 +1,2 @@
 # anfustay
-guest guides and booking
+Anfu Stay Collection Rental Guide
