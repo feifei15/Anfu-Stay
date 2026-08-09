@@ -60,10 +60,14 @@ export default async function stripeWebhook(request, response) {
     return sendJson(response, 400, { error: "Invalid webhook payload." });
   }
 
-  if (event.type === "checkout.session.completed") {
+  if (
+    event.type === "checkout.session.completed" ||
+    event.type === "checkout.session.async_payment_succeeded"
+  ) {
     const session = event.data.object;
     console.log("booking_payment_confirmed", {
       eventId: event.id,
+      eventType: event.type,
       checkoutSessionId: session.id,
       paymentIntentId: session.payment_intent,
       paymentStatus: session.payment_status,
