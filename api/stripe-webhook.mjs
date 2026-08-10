@@ -1,4 +1,5 @@
 import crypto from "node:crypto";
+import { confirmBooking, extendPendingHold, releaseHold } from "../lib/booking-db.mjs";
 
 const SIGNATURE_TOLERANCE_SECONDS = 300;
 
@@ -60,11 +61,13 @@ export default async function stripeWebhook(request, response) {
     return sendJson(response, 400, { error: "Invalid webhook payload." });
   }
 
-  if (
-    event.type === "checkout.session.completed" ||
-    event.type === "checkout.session.async_payment_succeeded"
-  ) {
+  if (event.type === "checkout.session.completed" || event.type === "checkout.session.async_payment_succeeded") {
     const session = event.data.object;
+    if (event.type === "checkout.session.async_payment_succeeded" || session.payment_status === "paid") {
+      await confirmBooking(session);
+    } else if (session.metadata?.hold_id) {
+      await extendPendingHold(session.metadata.hold_id);
+    }
     console.log("booking_payment_confirmed", {
       eventId: event.id,
       eventType: event.type,
@@ -82,6 +85,7 @@ export default async function stripeWebhook(request, response) {
     });
   } else if (event.type === "checkout.session.async_payment_failed") {
     const session = event.data.object;
+    if (session.metadata?.hold_id) await releaseHold(session.metadata.hold_id);
     console.warn("booking_payment_failed", {
       eventId: event.id,
       checkoutSessionId: session.id,

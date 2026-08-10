@@ -1,3 +1,6 @@
+import crypto from "node:crypto";
+import { attachStripeSession, getStayQuote, holdStay, releaseHold } from "../lib/booking-db.mjs";
+
 const ROOMS = Object.freeze({
   standard: {
     name: "Anfu Residence",
@@ -44,18 +47,19 @@ function checkoutBaseUrl(request) {
   return `${isLocal ? "http" : "https"}://${host}`;
 }
 
-function stripeParameters({ room, roomId, checkin, checkout, guests, nights, baseUrl }) {
+function stripeParameters({ room, roomId, checkin, checkout, guests, nights, accommodationTotalCny, holdId, baseUrl }) {
   const parameters = new URLSearchParams();
   parameters.set("mode", "payment");
   parameters.set("locale", "auto");
   parameters.set("customer_creation", "always");
+  parameters.set("expires_at", String(Math.floor(Date.now() / 1000) + 30 * 60));
   parameters.set("phone_number_collection[enabled]", "true");
   parameters.set("success_url", `${baseUrl}/sh/booking/success.html?session_id={CHECKOUT_SESSION_ID}`);
   parameters.set("cancel_url", `${baseUrl}/sh/booking/?checkout=cancelled`);
 
-  parameters.set("line_items[0][quantity]", String(nights));
+  parameters.set("line_items[0][quantity]", "1");
   parameters.set("line_items[0][price_data][currency]", "cny");
-  parameters.set("line_items[0][price_data][unit_amount]", String(room.nightlyRateCny * 100));
+  parameters.set("line_items[0][price_data][unit_amount]", String(accommodationTotalCny * 100));
   parameters.set("line_items[0][price_data][product_data][name]", room.name);
   parameters.set(
     "line_items[0][price_data][product_data][description]",
@@ -72,10 +76,11 @@ function stripeParameters({ room, roomId, checkin, checkout, guests, nights, bas
   parameters.set("metadata[checkout]", checkout);
   parameters.set("metadata[nights]", String(nights));
   parameters.set("metadata[guests]", String(guests));
+  parameters.set("metadata[hold_id]", holdId);
   return parameters;
 }
 
-module.exports = async function createCheckoutSession(request, response) {
+export default async function createCheckoutSession(request, response) {
   if (request.method !== "POST") {
     response.setHeader("Allow", "POST");
     return sendJson(response, 405, { error: "Method not allowed." });
@@ -83,6 +88,9 @@ module.exports = async function createCheckoutSession(request, response) {
 
   if (!process.env.STRIPE_SECRET_KEY) {
     return sendJson(response, 503, { error: "Secure payment is not configured." });
+  }
+  if (!process.env.DATABASE_URL) {
+    return sendJson(response, 503, { error: "Booking inventory is not configured." });
   }
 
   const baseUrl = checkoutBaseUrl(request);
@@ -122,7 +130,20 @@ module.exports = async function createCheckoutSession(request, response) {
     });
   }
 
+  const holdId = crypto.randomUUID();
   try {
+    const quote = await getStayQuote({
+      roomId,
+      checkin,
+      checkout,
+      defaultRateCny: room.nightlyRateCny,
+    });
+    if (!quote.available || quote.nights !== nights) {
+      return sendJson(response, 409, { error: "Those dates are no longer available." });
+    }
+    if (!(await holdStay({ holdId, checkin, checkout }))) {
+      return sendJson(response, 409, { error: "Those dates were just reserved. Please choose other dates." });
+    }
     const stripeResponse = await fetch("https://api.stripe.com/v1/checkout/sessions", {
       method: "POST",
       headers: {
@@ -130,10 +151,15 @@ module.exports = async function createCheckoutSession(request, response) {
         "Content-Type": "application/x-www-form-urlencoded",
         "Stripe-Version": "2026-02-25.clover",
       },
-      body: stripeParameters({ room, roomId, checkin, checkout, guests, nights, baseUrl }),
+      body: stripeParameters({
+        room, roomId, checkin, checkout, guests, nights,
+        accommodationTotalCny: quote.accommodationTotalCny,
+        holdId, baseUrl,
+      }),
     });
     const session = await stripeResponse.json();
     if (!stripeResponse.ok || !session.url) {
+      await releaseHold(holdId);
       console.error("Stripe Checkout Session creation failed", {
         status: stripeResponse.status,
         type: session?.error?.type,
@@ -141,9 +167,11 @@ module.exports = async function createCheckoutSession(request, response) {
       });
       return sendJson(response, 502, { error: "Unable to start secure payment. Please try again." });
     }
+    await attachStripeSession(holdId, session.id);
     return sendJson(response, 200, { url: session.url });
   } catch (error) {
+    await releaseHold(holdId).catch(() => {});
     console.error("Stripe Checkout request failed", error);
     return sendJson(response, 502, { error: "Unable to reach secure payment. Please try again." });
   }
-};
+}
