@@ -1,0 +1,1 @@
+document.querySelectorAll('[data-city-switch]').forEach(select=>select.addEventListener('change',()=>{const section=document.body.dataset.section||'';const city=select.value;if(city==='las-vegas'){location.href='/las-vegas/';return}location.href=`/${city}/${section?section+'/':''}`}));
