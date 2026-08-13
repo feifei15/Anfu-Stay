@@ -8,7 +8,7 @@ export default async function handler(req,res){
   const checkin=String(body?.checkin||""),checkout=String(body?.checkout||""),guests=Number(body?.guests),roomId=String(body?.roomId||"");
   const nights=Math.round((new Date(`${checkout}T00:00:00Z`)-new Date(`${checkin}T00:00:00Z`))/86400000);
   const minimumNights=roomId==="hk-extended"?7:1;
-  if(!["hk-standard","hk-extended"].includes(roomId)||nights<minimumNights||nights>90||!Number.isInteger(guests)||guests<1||guests>4) return send(res,400,{error:"Please review the stay, dates, and guests."});
+  if(!["hk-standard","hk-extended"].includes(roomId)||nights<minimumNights||nights>90||!Number.isInteger(guests)||guests<1||guests>2) return send(res,400,{error:"Please review the stay, dates, and guests."});
   const host=String(req.headers["x-forwarded-host"]||req.headers.host||"").split(",")[0].trim().toLowerCase();
   if(!(["anfustay.com","www.anfustay.com"].includes(host)||host.endsWith(".vercel.app")||host.startsWith("localhost"))) return send(res,400,{error:"Invalid booking origin."});
   const baseUrl=`${host.startsWith("localhost")?"http":"https"}://${host}`,holdId=crypto.randomUUID();
