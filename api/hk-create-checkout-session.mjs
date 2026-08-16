@@ -13,7 +13,7 @@ export default async function handler(req,res){
   if(!(["anfustay.com","www.anfustay.com"].includes(host)||host.endsWith(".vercel.app")||host.startsWith("localhost"))) return send(res,400,{error:"Invalid booking origin."});
   const baseUrl=`${host.startsWith("localhost")?"http":"https"}://${host}`,holdId=crypto.randomUUID();
   try{
-    const quote=await getHongKongStayQuote({checkin,checkout}); if(!quote.available) return send(res,409,{error:"Those dates are no longer available."});
+    const quote=await getHongKongStayQuote({roomId,checkin,checkout}); if(!quote.available) return send(res,409,{error:"Those dates are no longer available."});
     if(!await holdHongKongStay({holdId,checkin,checkout})) return send(res,409,{error:"Those dates were just reserved."});
     const p=new URLSearchParams({mode:"payment",locale:"auto",customer_creation:"always",success_url:`${baseUrl}/hk/booking/success.html?session_id={CHECKOUT_SESSION_ID}`,cancel_url:`${baseUrl}/hk/booking/?checkout=cancelled`});
     p.set("line_items[0][quantity]","1");p.set("line_items[0][price_data][currency]","usd");p.set("line_items[0][price_data][unit_amount]",String(quote.accommodationTotalUsd*100));p.set("line_items[0][price_data][product_data][name]",roomId==="hk-extended"?"Anfu Residence · Hong Kong · Extended Stay":"Anfu Residence · Hong Kong");p.set("line_items[0][price_data][product_data][description]",`${checkin} to ${checkout} · ${guests} guest${guests===1?"":"s"}`);
