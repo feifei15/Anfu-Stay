@@ -31,7 +31,6 @@ function validLocation(value) { return value === "sh" || value === "hk"; }
 
 export default async function adminCalendar(request, response) {
   if (!authorized(request)) {
-    response.setHeader("WWW-Authenticate", 'Basic realm="Anfu Stay Admin"');
     return sendJson(response, 401, { error: "Authentication required." });
   }
   try {
