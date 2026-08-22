@@ -53,21 +53,26 @@ export default async function adminCalendar(request, response) {
       const location = String(body?.location || "sh");
       const roomId = String(body?.roomId || (location === "hk" ? "hk-standard" : "standard"));
       const rate = Number(body?.rate ?? body?.rateCny ?? body?.rateUsd);
+      const weeklyRates = Array.isArray(body?.weeklyRates) ? body.weeklyRates.map(Number) : [];
       if (!validDate(start) || !validDate(end) || end <= start) return sendJson(response, 400, { error: "Invalid date range." });
       if (!validLocation(location)) return sendJson(response, 400, { error: "Invalid location." });
       const roomIds = location === "hk" ? ["hk-standard", "hk-extended"] : ["standard", "extended"];
-      if (["set_price", "clear_price"].includes(action) && !roomIds.includes(roomId)) {
+      if (["set_price", "clear_price", "set_weekly_prices"].includes(action) && !roomIds.includes(roomId)) {
         return sendJson(response, 400, { error: "Invalid rate plan." });
       }
       const maximumRate = location === "hk" ? 10000 : 100000;
       if (action === "set_price" && (!Number.isInteger(rate) || rate < 1 || rate > maximumRate)) {
         return sendJson(response, 400, { error: `Enter a valid nightly price in ${location === "hk" ? "USD" : "CNY"}.` });
       }
+      if (action === "set_weekly_prices" &&
+        (weeklyRates.length !== 7 || weeklyRates.some((value) => !Number.isInteger(value) || value < 1 || value > maximumRate))) {
+        return sendJson(response, 400, { error: `Enter all seven valid daily prices in ${location === "hk" ? "USD" : "CNY"}.` });
+      }
       const note = String(body?.note || "").slice(0, 200);
       if (location === "hk") {
-        await updateHongKongAdminCalendar({ action, start, end, roomId, rateUsd: rate, note });
+        await updateHongKongAdminCalendar({ action, start, end, roomId, rateUsd: rate, note, weeklyRates });
       } else {
-        await updateAdminCalendar({ action, start, end, roomId, rateCny: rate, note });
+        await updateAdminCalendar({ action, start, end, roomId, rateCny: rate, note, weeklyRates });
       }
       return sendJson(response, 200, { saved: true, location });
     }
