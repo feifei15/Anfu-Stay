@@ -46,7 +46,7 @@
       $('#room').innerHTML=config.rooms.map(([id,name])=>`<option value="${id}">${name}</option>`).join('');
     }
     async function request(url,options={}){const response=await fetch(url,{...options,headers:{...headers(),...(options.headers||{})}});const data=await response.json();if(response.status===401){auth='';sessionStorage.removeItem('anfu-admin-auth');$('#login').hidden=false;throw new Error('Please sign in.')}if(!response.ok)throw new Error(data.error||'Request failed.');return data}
-    async function load(){const start=iso(today),end=iso(endDate);$('#status').textContent='Loading…';try{const data=await request(`/api/admin-calendar?location=${locationId}&start=${start}&end=${end}`);$('#login').hidden=true;render(data);$('#status').textContent=''}catch(error){$('#status').textContent=error.message}}
+    async function load(){const start=iso(today),end=iso(endDate);$('#status').textContent='Loading…';try{const data=await request(`/api/admin-calendar?location=${locationId}&start=${start}&end=${end}`);$('#login').hidden=true;render(data);$('#status').textContent='';return true}catch(error){$('#status').textContent=error.message;return false}}
     function render(data){
       const config=locationConfig[locationId];
       $('#blocked-count').textContent=data.inventory.length;$('#booking-count').textContent=data.bookings.length;$('#price-count').textContent=data.prices.length;
@@ -56,7 +56,7 @@
     }
     async function save(action){$('#status').textContent='Saving…';try{await request('/api/admin-calendar',{method:'POST',body:JSON.stringify({location:locationId,action,start:$('#start').value,end:$('#end').value,roomId:$('#room').value,rate:Number($('#rate').value),note:$('#note').value})});$('#status').textContent='Saved.';await load()}catch(error){$('#status').textContent=error.message}}
     document.querySelectorAll('[data-location]').forEach(button=>button.onclick=async()=>{locationId=button.dataset.location;localStorage.setItem('anfu-admin-location',locationId);history.replaceState(null,'',`/admin/?location=${locationId}`);applyLocation();if(auth)await load()});
-    $('#block').onclick=()=>save('block');$('#unblock').onclick=()=>save('unblock');$('#set-price').onclick=()=>save('set_price');$('#clear-price').onclick=()=>save('clear_price');$('#logout').onclick=()=>{auth='';sessionStorage.removeItem('anfu-admin-auth');$('#login').hidden=false};$('#login-form').onsubmit=async event=>{event.preventDefault();auth=btoa(`${$('#username').value}:${$('#password').value}`);sessionStorage.setItem('anfu-admin-auth',auth);$('#login-status').textContent='';try{await load()}catch(error){$('#login-status').textContent=error.message}};
+    $('#block').onclick=()=>save('block');$('#unblock').onclick=()=>save('unblock');$('#set-price').onclick=()=>save('set_price');$('#clear-price').onclick=()=>save('clear_price');$('#logout').onclick=()=>{auth='';sessionStorage.removeItem('anfu-admin-auth');$('#login').hidden=false};$('#login-form').onsubmit=async event=>{event.preventDefault();const button=event.submitter;button.disabled=true;button.textContent='Signing in…';auth=btoa(`${$('#username').value}:${$('#password').value}`);sessionStorage.setItem('anfu-admin-auth',auth);$('#login-status').textContent='';const signedIn=await load();if(!signedIn)$('#login-status').textContent=auth?'Unable to sign in. Please try again.':'Incorrect username or password.';button.disabled=false;button.textContent='Sign in'};
     applyLocation();if(auth)load();
   </script>
 </body>
