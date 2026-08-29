@@ -33,7 +33,9 @@ const translations = {
   'Entrance and dining': '入口与用餐区', 'Second bedroom': '第二间卧室', 'Walk-in shower': '步入式淋浴间',
   'Amenities': '设施', 'In-unit washer and dryer': '室内洗衣机与烘干机', 'Balcony': '阳台', 'Kitchen': '厨房', 'Bedroom 1': '卧室一',
   'Bedroom 2': '卧室二', 'Bathrooms': '浴室', 'Outside views': '外部景观', 'Others': '其他',
-  'Apartment floor plan': '公寓平面图', 'Second bathroom': '第二间浴室', 'Golden-hour panorama': '金色时刻全景'
+  'Apartment floor plan': '公寓平面图', 'Second bathroom': '第二间浴室', 'Golden-hour panorama': '金色时刻全景',
+  'Moonlit city view': '月色城市夜景', 'Evening skyline': '傍晚天际线',
+  'Balcony seating and city view': '阳台座椅与城市景观', 'Morning on the balcony': '阳台晨光'
 };
 
 const originalText = new WeakMap();
