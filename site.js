@@ -62,11 +62,13 @@ const translations = {
   'Contact and local support': '联系与本地支持', 'The easiest way to reach us is through Airbnb messages or WeChat at': '最方便的联系方式是通过 Airbnb 消息，或添加微信：',
   'Check-in and check-out': '入住与退房', 'Check-in': '入住', 'Check-out': '退房',
   'Anfu Stay · Guest support': '安福居 · 住客支持', 'How can we help?': '需要什么帮助？',
-  'Choose your destination below for the quickest way to reach us before or during your stay.': '请选择下方目的地，以便在入住前或入住期间快速联系我们。',
+  'Use WeChat or WhatsApp to reach us before or during your stay in Shanghai or Hong Kong.': '在上海或香港入住前或入住期间，您可以通过微信或 WhatsApp 联系我们。',
   'Shanghai guest support': '上海住客支持', 'Scan either QR code to contact Fay. WeChat is usually the easiest option in mainland China.': '扫描任一二维码联系 Fay。在中国大陆，微信通常是最方便的方式。',
   'WeChat': '微信', 'Scan in WeChat to add Fay as a contact.': '使用微信扫一扫，添加 Fay 为联系人。',
   'WhatsApp': 'WhatsApp', 'Scan in WhatsApp to add Fay as a contact.': '使用 WhatsApp 扫描二维码，添加 Fay 为联系人。', 'Scan to connect': '扫码联系',
-  'Hong Kong guest support': '香港住客支持', 'The easiest way to reach us is through Airbnb messages or WeChat at': '最方便的联系方式是通过 Airbnb 消息，或添加微信：'
+  'Hong Kong guest support': '香港住客支持', 'The easiest way to reach us is through Airbnb messages or WeChat at': '最方便的联系方式是通过 Airbnb 消息，或添加微信：',
+  'Shanghai · Hong Kong': '上海 · 香港', 'Guest support': '住客支持',
+  'Scan either QR code to contact Fay. The same WeChat and WhatsApp contacts support both destinations.': '扫描任一二维码联系 Fay。上海和香港均使用相同的微信和 WhatsApp 联系方式。'
 };
 
 const originalText = new WeakMap();
