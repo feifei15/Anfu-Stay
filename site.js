@@ -45,7 +45,22 @@ const translations = {
   'Living room and storage': '客厅与储物空间', 'Interior details': '室内细节',
   'Bedroom and workspace': '卧室与办公区', 'Bathroom and bathtub': '浴室与浴缸',
   'Corner workspace': '转角办公区', 'Workspace city view': '办公区城市景观', 'Window-side desk': '窗边书桌',
-  'Neighborhood lane': '街区小巷'
+  'Neighborhood lane': '街区小巷',
+  'Guest guide': '住客指南', 'Everything you need for a comfortable arrival and stay at Woodlands Court.': '在活倫閣舒适抵达与入住所需的全部信息。',
+  'Getting there': '前往公寓', 'Address': '地址', 'English:': '英文：', 'For a taxi driver, you can say in Cantonese: “Wei Sing Dou, Wo Luen Toi.”': '乘坐出租车时，可用粤语对司机说：“Wei Sing Dou, Wo Luen Toi”。',
+  'The apartment is Unit 14B of Woodlands Court, behind the Dr Sun Yat-sen Museum on Castle Road.': '公寓位于活倫閣14B室，在堅道孙中山纪念馆后方。',
+  'From the Airport Express': '从机场快线出发', 'Begin at Hong Kong Station in Central. Take a taxi directly to Woodlands Court, or walk toward the Central–Mid-Levels Escalator and continue uphill to Woodlands Terrace.': '从中环香港站出发，可乘出租车直达活倫閣，或步行至中环至半山自动扶梯，再继续上行前往活倫台。',
+  'Taxi': '出租车', 'Hong Kong Station to the apartment': '香港站至公寓', 'A direct driving route from the Airport Express terminal in Central.': '从中环机场快线总站直接驾车前往公寓。', 'Open taxi route': '打开出租车路线',
+  'Walk': '步行', 'Walk via the Mid-Levels Escalator': '经半山自动扶梯步行', 'Walk from Hong Kong Station to the Central–Mid-Levels Escalator, ride uphill, then continue to Woodlands Terrace.': '从香港站步行至中环至半山自动扶梯，乘扶梯上行后继续前往活倫台。', 'Open walking route': '打开步行路线',
+  'Getting in': '进入公寓', 'Go directly to Unit 14B and use the Samsung digital lock. Access codes are shared privately with confirmed guests.': '请直接前往14B室并使用三星电子门锁。开门密码仅私下提供给已确认的住客。',
+  'Wi-Fi': '无线网络', 'Networks': '网络名称', 'or': '或', 'Password:': '密码：', 'Connection': '网络连接', 'The apartment has SmarTone 5G Wi-Fi and a fiber connection.': '公寓提供 SmarTone 5G 无线网络与光纤网络。',
+  'Water heating and humidity': '热水与防潮', 'Hot water': '热水', 'The water-heater switch is the square switch outside the bathroom and should remain on. The heater inside the shower should also be on, with the digital temperature visible.': '热水器开关是浴室外的方形开关，应保持开启。淋浴间内的热水器也应开启，并显示电子温度。',
+  'Humidity': '湿度', 'On humid days, keep the windows closed. Use the white Westinghouse dehumidifier and empty it when full. The fan and both living-room air conditioners can also help control humidity.': '香港潮湿时请关好窗户，使用白色 Westinghouse 除湿机，并在水箱满时清空。风扇和客厅的两台空调也可帮助除湿。',
+  'Trash': '垃圾', 'Place tied trash bags inside the bin in the stairwell, behind the door opposite the elevator. Trash is collected daily. If the bin is full, please do not leave bags outside it. Flatten all boxes before disposal.': '请将扎好的垃圾袋放入楼梯间内的垃圾桶，位置在电梯对面门的后方。垃圾每天清运；若垃圾桶已满，请勿将垃圾袋留在桶外。纸箱须拆平后再丢弃。',
+  'TV and stereo': '电视与音响', 'Use the Apple remote for Apple TV. YouTube, Netflix, and Prime Video are available. For television audio or music, connect to the Bluetooth stereo named': '使用 Apple 遥控器操作 Apple TV，可观看 YouTube、Netflix 和 Prime Video。电视音响或播放音乐时，请连接名为',
+  'Towels, sheets and inflatable mattress': '毛巾、床单与充气床垫', 'These are stored in the labeled shelves and drawers on the left side of the main living-room cabinet.': '这些用品存放在客厅主柜左侧带标签的搁板与抽屉内。',
+  'Contact and local support': '联系与本地支持', 'The easiest way to reach us is through Airbnb messages or WeChat at': '最方便的联系方式是通过 Airbnb 消息，或添加微信：',
+  'Check-in and check-out': '入住与退房', 'Check-in': '入住', 'Check-out': '退房'
 };
 
 const originalText = new WeakMap();
@@ -53,7 +68,8 @@ const pageTitles = {
   'Anfu Stay · Boutique residences': '安福居 · 精品城市居所',
   'Anfu Stay · Shanghai': '安福居 · 上海', 'Anfu Stay · Hong Kong': '安福居 · 香港',
   'Anfu Stay · Las Vegas · Coming soon': '安福居 · 拉斯维加斯 · 即将推出',
-  'Gallery · Anfu Stay Shanghai': '相册 · 安福居上海', 'Gallery · Anfu Stay Hong Kong': '相册 · 安福居香港'
+  'Gallery · Anfu Stay Shanghai': '相册 · 安福居上海', 'Gallery · Anfu Stay Hong Kong': '相册 · 安福居香港',
+  'Guide · Anfu Stay Hong Kong': '指南 · 安福居香港'
 };
 
 function translateText(language) {
