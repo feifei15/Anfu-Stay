@@ -109,7 +109,7 @@ if (headerShell) {
   switcher.className = 'language-switch';
   switcher.setAttribute('aria-label', 'Language / 语言');
   switcher.innerHTML = '<button type="button" data-language="en">EN</button><button type="button" data-language="zh">中文</button>';
-  headerShell.insertBefore(switcher, headerShell.querySelector('.site-nav'));
+  headerShell.appendChild(switcher);
   switcher.addEventListener('click', event => {
     const button = event.target.closest('button[data-language]');
     if (button) setLanguage(button.dataset.language);
