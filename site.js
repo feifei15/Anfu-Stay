@@ -40,7 +40,12 @@ const translations = {
   'Dedicated workspace': '独立办公区', 'Bedroom with ensuite': '带套内浴室的卧室', 'Bedroom 1 overview': '卧室一全景',
   'Guest bedroom': '客卧', 'Guest bedroom television': '客卧电视', 'Guest bedroom workspace': '客卧办公区', 'Bedroom window view': '卧室窗景',
   'Hand wash and basin': '洗手液与洗手盆', 'Shampoo and conditioner': '洗发水与护发素',
-  'Entertainment area': '影音娱乐区', 'Living room entrance': '客厅入口'
+  'Entertainment area': '影音娱乐区', 'Living room entrance': '客厅入口',
+  'Views': '景观', 'Workspace': '办公区', 'Neighborhood': '街区',
+  'Living room and storage': '客厅与储物空间', 'Interior details': '室内细节',
+  'Bedroom and workspace': '卧室与办公区', 'Bathroom and bathtub': '浴室与浴缸',
+  'Corner workspace': '转角办公区', 'Workspace city view': '办公区城市景观', 'Window-side desk': '窗边书桌',
+  'Neighborhood lane': '街区小巷'
 };
 
 const originalText = new WeakMap();
