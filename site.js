@@ -23,7 +23,14 @@ const translations = {
   'Views and details from the residence and its Shanghai setting.': '记录居所细节与上海周边景致。',
   'Hong Kong views and the visual character of the stay.': '香港景色与居所的独特风貌。',
   'Shanghai at sunset': '上海日落', 'Living space': '起居空间', 'Bedroom': '卧室', 'Evening view': '夜景', 'Residence interior': '居所内景', 'From the residence': '居所眺望',
-  'Victoria Harbour': '维多利亚港', 'Hong Kong by day': '香港日景', 'Hong Kong by night': '香港夜景'
+  'Victoria Harbour': '维多利亚港', 'Hong Kong by day': '香港日景', 'Hong Kong by night': '香港夜景',
+  'Connected living spaces': '连贯的居住空间', 'Private balcony': '私人阳台', 'The residence': '公寓所在建筑',
+  'Bathroom and bedroom': '浴室与卧室', 'Bedroom workspace': '卧室办公区', 'Light-filled bedroom': '采光充足的卧室',
+  'Full bathroom': '完整浴室', 'Open-plan living': '开放式起居空间', 'City panorama': '城市全景',
+  'Living and dining': '起居与用餐空间', 'Living room and balcony': '客厅与阳台', 'Living room': '客厅',
+  'Building exterior': '建筑外观', 'Kitchen and dining': '厨房与餐厅', 'Indoor-outdoor living': '室内外相连的起居空间',
+  'Breakfast area': '早餐区', 'Full kitchen': '设备齐全的厨房', 'Kitchen details': '厨房细节',
+  'Entrance and dining': '入口与用餐区', 'Second bedroom': '第二间卧室', 'Walk-in shower': '步入式淋浴间'
 };
 
 const originalText = new WeakMap();
