@@ -1,5 +1,5 @@
 const translations = {
-  'Destinations': '目的地', 'Gallery': '相册', 'Guide': '指南', 'Book': '预订', 'Contact': '联系',
+  'Destinations': '目的地', 'Home': '首页', 'Gallery': '相册', 'Guide': '指南', 'Book': '预订', 'Contact': '联系',
   'Stay somewhere with a point of view.': '住进一座城，也住进一种视角。',
   'Private, thoughtful residences shaped by their cities—from Shanghai and Hong Kong to what comes next.': '精心打造的城市居所，从上海、香港，到即将抵达的下一站。',
   'Explore destinations': '探索目的地', 'Anfu Stay Collection': '安福居系列',
