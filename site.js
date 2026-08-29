@@ -31,7 +31,7 @@ const translations = {
   'Building exterior': '建筑外观', 'Kitchen and dining': '厨房与餐厅', 'Indoor-outdoor living': '室内外相连的起居空间',
   'Breakfast area': '早餐区', 'Full kitchen': '设备齐全的厨房', 'Kitchen details': '厨房细节',
   'Entrance and dining': '入口与用餐区', 'Second bedroom': '第二间卧室', 'Walk-in shower': '步入式淋浴间',
-  'Apartment overview': '公寓概览', 'Balcony': '阳台', 'Kitchen': '厨房', 'Bedroom 1': '卧室一',
+  'Amenities': '设施', 'In-unit washer and dryer': '室内洗衣机与烘干机', 'Balcony': '阳台', 'Kitchen': '厨房', 'Bedroom 1': '卧室一',
   'Bedroom 2': '卧室二', 'Bathrooms': '浴室', 'Outside views': '外部景观'
 };
 
