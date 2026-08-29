@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="description" content="Book your Anfu Stay in Shanghai directly.">
   <title>Book Anfu Stay · Shanghai</title>
+  <link rel="stylesheet" href="/booking-calendar.css">
   <style>
     :root{--paper:#f7f0e4;--white:#fffdf9;--ink:#27241f;--muted:#706b61;--line:#d8cdbc;--gold:#a77d20;--olive:#62654d;--danger:#8e4a38;--shadow:0 18px 50px rgba(54,45,31,.11)}
     *{box-sizing:border-box} html{scroll-behavior:smooth} body{margin:0;background:var(--paper);color:var(--ink);font-family:Avenir Next,Avenir,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased} button,input,select{font:inherit} button{cursor:pointer} img{display:block;max-width:100%} a{color:inherit}.shell{width:min(1240px,calc(100% - 48px));margin:auto}
@@ -27,7 +28,7 @@
     <div class="field"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="5" width="18" height="16"/><path d="M7 2v6M17 2v6M3 10h18"/></svg><div><label for="checkin">Check-in</label><input id="checkin" type="date"></div></div>
     <div class="field"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="5" width="18" height="16"/><path d="M7 2v6M17 2v6M3 10h18"/></svg><div><label for="checkout">Check-out</label><input id="checkout" type="date"></div></div>
     <button class="search-btn" id="search">Check availability</button>
-  </div></section>
+  </div><section class="booking-calendar" data-booking-calendar data-endpoint="/api/availability" data-room-id="standard" aria-label="Choose your stay dates"><div class="calendar-toolbar"><div><div class="calendar-title">Choose your dates</div><div class="calendar-help">Select an available check-in date, then your check-out date.</div></div><div class="calendar-nav"><button type="button" data-calendar-prev aria-label="Previous month">‹</button><button type="button" data-calendar-next aria-label="Next month">›</button></div></div><div class="calendar-months"></div><div class="calendar-legend"><span class="legend-item"><span class="legend-dot"></span>Available</span><span class="legend-item"><span class="legend-dot blocked"></span>Blocked</span><span class="calendar-status" role="status" aria-live="polite"></span></div></section></section>
   <main class="shell"><div class="booking-grid">
     <section><h2 class="section-title">Available stays</h2><p class="section-sub" id="availability">Choose your dates to see the total for your stay.</p><div class="rooms">
       <article class="room" data-room-id="standard" data-room="Anfu Residence" data-rate="1080"><img class="room-image" src="/sh/booking/images/shanghai-sunset-panorama.jpg" alt="Panoramic sunset view across central Shanghai"><div><h3>Anfu Residence</h3><p>A light-filled private residence with a generous living room, kitchen and quiet bedroom in the heart of the Former French Concession.</p><div class="amenities"><span>Entire residence</span><span>2 guests</span><span>1 bedroom</span><span>Wi-Fi</span></div><p class="policy">Free cancellation until 7 days before arrival</p></div><div class="room-price"><div><div class="nightly">¥1,080</div><div class="per">per night</div></div><button class="select-btn">Select</button></div></article>
@@ -46,6 +47,7 @@
     <button class="currency-option" data-currency="GBP"><span><span class="currency-code">GBP</span><span class="currency-name">Sterling</span></span><span class="currency-check">✓</span></button>
     <button class="currency-option active" data-currency="USD"><span><span class="currency-code">USD</span><span class="currency-name">United States Dollar</span></span><span class="currency-check">✓</span></button>
   </div><p class="currency-note">Converted prices are estimates for convenience. Stripe Checkout will show the final CNY charge before you pay.</p></div></div>
+  <script src="/booking-calendar.js" defer></script>
   <script>
     const checkin=document.querySelector('#checkin'),checkout=document.querySelector('#checkout'),guests=document.querySelector('#guests');
     const today=new Date();today.setHours(0,0,0,0);const next=new Date(today);next.setDate(next.getDate()+2);const after=new Date(next);after.setDate(after.getDate()+3);const iso=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;checkin.min=iso(today);checkin.value=iso(next);checkout.min=iso(new Date(next.getTime()+86400000));checkout.value=iso(after);
