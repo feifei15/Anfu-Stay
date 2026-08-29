@@ -304,6 +304,7 @@
   }
 
   .intro-line{ font-size:15px; color:var(--ink-soft); margin-bottom:22px; max-width:640px; line-height:1.6; }
+  .guide-contact-link{display:inline-block;padding:14px 22px;background:var(--ink);color:#fff;text-decoration:none;text-transform:uppercase;letter-spacing:.1em;font-size:12px;font-weight:700;}
 
   .contact-grid{ display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:28px; }
   .contact-card{
@@ -512,6 +513,7 @@
       <a href="#overview"><span class="en">Guest Guide</span><span class="zh">入住指南</span></a>
       <a href="/sh/gallery/">Gallery</a>
       <a href="/sh/booking/"><span class="en">Book a Stay</span><span class="zh">预订住宿</span></a>
+      <a href="/contact/"><span class="en">Contact</span><span class="zh">联系</span></a>
     </nav>
     <div class="lang-toggle" id="langToggle" role="group" aria-label="Language / 语言">
       <button type="button" data-set="en" class="active" aria-pressed="true">EN</button>
@@ -618,7 +620,7 @@
     <a href="#tv"><span class="en">TV</span><span class="zh">电视</span></a>
     <a href="#music"><span class="en">Music</span><span class="zh">音乐</span></a>
     <a href="#trash"><span class="en">Trash</span><span class="zh">垃圾</span></a>
-    <a href="#contact"><span class="en">Contact Us</span><span class="zh">联系我们</span></a>
+    <a href="/contact/"><span class="en">Contact Us</span><span class="zh">联系我们</span></a>
   </div>
 </nav>
 
@@ -889,34 +891,17 @@
     </div>
   </section>
 
-  <!-- CONTACT -->
+  <!-- CONTACT LINK -->
   <section class="block" id="contact">
     <div class="section-head">
       <div class="num-badge badge-contact">08</div>
       <h2><span class="en">Contact Us</span><span class="zh zh-font">联系我们</span></h2>
     </div>
     <p class="intro-line">
-      <span class="en">Need help during your stay? Scan either QR code below to contact Fay.</span>
-      <span class="zh">入住期间如需帮助，请扫描下方任一二维码联系 Fay。</span>
+      <span class="en">Need help during your stay? Visit our Contact page for WeChat and WhatsApp support.</span>
+      <span class="zh">入住期间如需帮助，请前往联系我们页面获取微信和 WhatsApp 联系方式。</span>
     </p>
-    <div class="contact-grid">
-      <article class="contact-card contact-card--wechat">
-        <div class="contact-platform"><span class="contact-dot" aria-hidden="true"></span><h3>WeChat</h3></div>
-        <p><span class="en">Scan in WeChat to add Fay as a contact.</span><span class="zh">使用微信扫一扫，添加 Fay 为好友。</span></p>
-        <div class="contact-qr">
-          <img src="/images/qr-wechat.jpeg" alt="Fay's WeChat contact QR code" loading="lazy" decoding="async">
-        </div>
-        <div class="contact-scan-label"><span class="en">Scan to connect</span><span class="zh">扫码联系</span></div>
-      </article>
-      <article class="contact-card contact-card--whatsapp">
-        <div class="contact-platform"><span class="contact-dot" aria-hidden="true"></span><h3>WhatsApp</h3></div>
-        <p><span class="en">Scan in WhatsApp to add Fay as a contact.</span><span class="zh">使用 WhatsApp 扫描二维码，添加 Fay 为联系人。</span></p>
-        <div class="contact-qr">
-          <img src="/images/qr-whatsapp.jpeg" alt="Fay's WhatsApp contact QR code" loading="lazy" decoding="async">
-        </div>
-        <div class="contact-scan-label"><span class="en">Scan to connect</span><span class="zh">扫码联系</span></div>
-      </article>
-    </div>
+    <a class="guide-contact-link" href="/contact/"><span class="en">Open Contact page</span><span class="zh">前往联系我们页面</span></a>
   </section>
 
 </main>
@@ -980,7 +965,11 @@
   }
 
   const navLinks = [...document.querySelectorAll('.quicknav a')];
-  const targets = navLinks.map(link => document.querySelector(link.getAttribute('href'))).filter(Boolean);
+  const targets = navLinks
+    .map(link => link.getAttribute('href'))
+    .filter(href => href && href.startsWith('#'))
+    .map(href => document.querySelector(href))
+    .filter(Boolean);
   const setActiveNav = (id) => {
     navLinks.forEach(link => {
       const active = link.getAttribute('href') === `#${id}`;

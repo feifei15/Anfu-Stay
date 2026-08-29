@@ -1,5 +1,5 @@
 const translations = {
-  'Destinations': '目的地', 'Gallery': '相册', 'Guide': '指南', 'Book': '预订',
+  'Destinations': '目的地', 'Gallery': '相册', 'Guide': '指南', 'Book': '预订', 'Contact': '联系',
   'Stay somewhere with a point of view.': '住进一座城，也住进一种视角。',
   'Private, thoughtful residences shaped by their cities—from Shanghai and Hong Kong to what comes next.': '精心打造的城市居所，从上海、香港，到即将抵达的下一站。',
   'Explore destinations': '探索目的地', 'Anfu Stay Collection': '安福居系列',
@@ -60,7 +60,13 @@ const translations = {
   'TV and stereo': '电视与音响', 'Use the Apple remote for Apple TV. YouTube, Netflix, and Prime Video are available. For television audio or music, connect to the Bluetooth stereo named': '使用 Apple 遥控器操作 Apple TV，可观看 YouTube、Netflix 和 Prime Video。电视音响或播放音乐时，请连接名为',
   'Towels, sheets and inflatable mattress': '毛巾、床单与充气床垫', 'These are stored in the labeled shelves and drawers on the left side of the main living-room cabinet.': '这些用品存放在客厅主柜左侧带标签的搁板与抽屉内。',
   'Contact and local support': '联系与本地支持', 'The easiest way to reach us is through Airbnb messages or WeChat at': '最方便的联系方式是通过 Airbnb 消息，或添加微信：',
-  'Check-in and check-out': '入住与退房', 'Check-in': '入住', 'Check-out': '退房'
+  'Check-in and check-out': '入住与退房', 'Check-in': '入住', 'Check-out': '退房',
+  'Anfu Stay · Guest support': '安福居 · 住客支持', 'How can we help?': '需要什么帮助？',
+  'Choose your destination below for the quickest way to reach us before or during your stay.': '请选择下方目的地，以便在入住前或入住期间快速联系我们。',
+  'Shanghai guest support': '上海住客支持', 'Scan either QR code to contact Fay. WeChat is usually the easiest option in mainland China.': '扫描任一二维码联系 Fay。在中国大陆，微信通常是最方便的方式。',
+  'WeChat': '微信', 'Scan in WeChat to add Fay as a contact.': '使用微信扫一扫，添加 Fay 为联系人。',
+  'WhatsApp': 'WhatsApp', 'Scan in WhatsApp to add Fay as a contact.': '使用 WhatsApp 扫描二维码，添加 Fay 为联系人。', 'Scan to connect': '扫码联系',
+  'Hong Kong guest support': '香港住客支持', 'The easiest way to reach us is through Airbnb messages or WeChat at': '最方便的联系方式是通过 Airbnb 消息，或添加微信：'
 };
 
 const originalText = new WeakMap();
@@ -69,7 +75,8 @@ const pageTitles = {
   'Anfu Stay · Shanghai': '安福居 · 上海', 'Anfu Stay · Hong Kong': '安福居 · 香港',
   'Anfu Stay · Las Vegas · Coming soon': '安福居 · 拉斯维加斯 · 即将推出',
   'Gallery · Anfu Stay Shanghai': '相册 · 安福居上海', 'Gallery · Anfu Stay Hong Kong': '相册 · 安福居香港',
-  'Guide · Anfu Stay Hong Kong': '指南 · 安福居香港'
+  'Guide · Anfu Stay Hong Kong': '指南 · 安福居香港',
+  'Contact · Anfu Stay': '联系 · 安福居'
 };
 
 function translateText(language) {
