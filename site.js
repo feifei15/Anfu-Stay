@@ -119,7 +119,7 @@ if (headerShell) {
 document.querySelectorAll('[data-city-switch]').forEach(select => select.addEventListener('change', () => {
   const section = document.body.dataset.section || '';
   const city = select.value;
-  location.href = city === 'las-vegas' ? '/las-vegas/' : `/${city}/${section ? `${section}/` : ''}`;
+  location.href = city === 'las-vegas' ? '/las-vegas/' : `/${city}/${section && section !== 'contact' ? `${section}/` : ''}`;
 }));
 
 setLanguage(localStorage.getItem('anfu-language') === 'zh' ? 'zh' : 'en');
