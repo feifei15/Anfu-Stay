@@ -47,6 +47,8 @@ const translations = {
   'Corner workspace': '转角办公区', 'Workspace city view': '办公区城市景观', 'Window-side desk': '窗边书桌',
   'Neighborhood lane': '街区小巷', 'Additional workspace': '另一处办公区', 'Laundry and appliances': '洗衣与家用电器',
   'Guest guide': '住客指南', 'Everything you need for a comfortable arrival and stay at Woodlands Court.': '在活倫閣舒适抵达与入住所需的全部信息。',
+  'Arrival essentials': '抵达须知', 'Copy address': '复制地址', 'Copy 5G network': '复制 5G 网络名', 'Copy fiber network': '复制光纤网络名', 'Copy password': '复制密码', 'Arrival & departure': '入住与退房',
+  'No. 1 Woodlands Terrace, Woodlands Court, Unit 14B': '衛城道活倫台1號，活倫閣14樓B室', 'Check-in:': '入住：', 'Check-out:': '退房：', 'from 4:00 PM': '下午 4:00 后', 'by 11:00 AM': '上午 11:00 前',
   'Getting there': '前往公寓', 'Address': '地址', 'English:': '英文：', 'For a taxi driver, you can say in Cantonese: “Wei Sing Dou, Wo Luen Toi.”': '乘坐出租车时，可用粤语对司机说：“Wei Sing Dou, Wo Luen Toi”。',
   'The apartment is Unit 14B of Woodlands Court, behind the Dr Sun Yat-sen Museum on Castle Road.': '公寓位于活倫閣14B室，在堅道孙中山纪念馆后方。',
   'From the Airport Express': '从机场快线出发', 'Begin at Hong Kong Station in Central. Take a taxi directly to Woodlands Court, or walk toward the Central–Mid-Levels Escalator and continue uphill to Woodlands Terrace.': '从中环香港站出发，可乘出租车直达活倫閣，或步行至中环至半山自动扶梯，再继续上行前往活倫台。',
@@ -123,3 +125,25 @@ document.querySelectorAll('[data-city-switch]').forEach(select => select.addEven
 }));
 
 setLanguage(localStorage.getItem('anfu-language') === 'zh' ? 'zh' : 'en');
+
+document.addEventListener('click', async event => {
+  const button = event.target.closest('[data-copy]');
+  if (!button) return;
+  const value = button.dataset.copy;
+  const status = document.querySelector('[data-copy-status]');
+  try {
+    await navigator.clipboard.writeText(value);
+    if (status) status.textContent = document.documentElement.lang === 'zh-CN' ? '已复制' : 'Copied';
+  } catch {
+    const input = document.createElement('textarea');
+    input.value = value;
+    input.setAttribute('readonly', '');
+    input.style.position = 'fixed';
+    input.style.opacity = '0';
+    document.body.appendChild(input);
+    input.select();
+    const copied = document.execCommand('copy');
+    input.remove();
+    if (status) status.textContent = copied ? (document.documentElement.lang === 'zh-CN' ? '已复制' : 'Copied') : (document.documentElement.lang === 'zh-CN' ? '请手动复制' : 'Select and copy');
+  }
+});
