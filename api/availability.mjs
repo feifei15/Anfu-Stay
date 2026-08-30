@@ -1,8 +1,7 @@
 import { getStayQuote } from "../lib/booking-db.mjs";
 
 const ROOMS = Object.freeze({
-  standard: { nightlyRateCny: 1080, minimumNights: 1 },
-  extended: { nightlyRateCny: 920, minimumNights: 7 },
+  standard: { nightlyRateCny: 1080, longStayDiscountPercent: 15, minimumNights: 1 },
 });
 
 function sendJson(response, status, body) {
@@ -34,6 +33,7 @@ export default async function availability(request, response) {
   try {
     return sendJson(response, 200, await getStayQuote({
       roomId, checkin, checkout, defaultRateCny: room.nightlyRateCny,
+      discountPercent: nights >= 7 ? room.longStayDiscountPercent : 0,
     }));
   } catch (error) {
     console.error("Availability lookup failed", error);

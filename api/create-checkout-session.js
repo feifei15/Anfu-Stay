@@ -5,12 +5,8 @@ const ROOMS = Object.freeze({
   standard: {
     name: "Anfu Residence",
     nightlyRateCny: 1080,
+    longStayDiscountPercent: 15,
     minimumNights: 1,
-  },
-  extended: {
-    name: "Anfu Residence · Extended Stay",
-    nightlyRateCny: 920,
-    minimumNights: 7,
   },
 });
 
@@ -137,6 +133,7 @@ export default async function createCheckoutSession(request, response) {
       checkin,
       checkout,
       defaultRateCny: room.nightlyRateCny,
+      discountPercent: nights >= 7 ? room.longStayDiscountPercent : 0,
     });
     if (!quote.available || quote.nights !== nights) {
       return sendJson(response, 409, { error: "Those dates are no longer available." });

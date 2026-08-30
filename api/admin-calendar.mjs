@@ -56,7 +56,7 @@ export default async function adminCalendar(request, response) {
       const weeklyRates = Array.isArray(body?.weeklyRates) ? body.weeklyRates.map(Number) : [];
       if (!validDate(start) || !validDate(end) || end <= start) return sendJson(response, 400, { error: "Invalid date range." });
       if (!validLocation(location)) return sendJson(response, 400, { error: "Invalid location." });
-      const roomIds = location === "hk" ? ["hk-standard", "hk-extended"] : ["standard", "extended"];
+      const roomIds = location === "hk" ? ["hk-standard", "hk-extended"] : ["standard"];
       if (["set_price", "clear_price", "set_weekly_prices"].includes(action) && !roomIds.includes(roomId)) {
         return sendJson(response, 400, { error: "Invalid rate plan." });
       }
