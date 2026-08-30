@@ -8,7 +8,12 @@
   const roomId = root.dataset.roomId;
   const monthsRoot = root.querySelector('.calendar-months');
   const status = root.querySelector('.calendar-status');
+  const selectionSummary = document.createElement('p');
+  selectionSummary.className = 'calendar-selection-summary';
+  selectionSummary.setAttribute('aria-live', 'polite');
+  monthsRoot.after(selectionSummary);
   const monthName = new Intl.DateTimeFormat('en-US', { month: 'long', year: 'numeric' });
+  const shortDate = new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric' });
   const iso = date => `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
   const parse = value => new Date(`${value}T00:00:00`);
   const today = new Date();
@@ -51,15 +56,24 @@
       button.classList.toggle('blocked', isBlocked);
       button.classList.toggle('unavailable', !isPast && !isBlocked && !availabilityLoaded);
       button.classList.toggle('available', !isPast && !isBlocked && availabilityLoaded);
+      let dayStatus;
       if (!isPast && availabilityLoaded) {
-        const dayStatus = document.createElement('span');
+        dayStatus = document.createElement('span');
         dayStatus.className = 'calendar-day-status';
         dayStatus.textContent = isBlocked ? 'Blocked' : 'Available';
         button.append(dayStatus);
       }
-      if (value === checkin.value || value === checkout.value) button.classList.add('selected');
-      if (checkin.value && checkout.value && value > checkin.value && value < checkout.value) button.classList.add('in-range');
-      button.setAttribute('aria-label', `${value}, ${isBlocked ? 'Blocked' : isPast ? 'Past' : availabilityLoaded ? 'Available' : 'Availability unavailable'}`);
+      const isCheckin = value === checkin.value;
+      const isCheckout = value === checkout.value;
+      const isInRange = checkin.value && checkout.value && value > checkin.value && value < checkout.value;
+      button.classList.toggle('checkin', isCheckin);
+      button.classList.toggle('checkout', isCheckout);
+      button.classList.toggle('in-range', isInRange);
+      if (dayStatus && isCheckin) dayStatus.textContent = 'Check-in';
+      if (dayStatus && isCheckout) dayStatus.textContent = 'Check-out';
+      if (dayStatus && isInRange) dayStatus.textContent = 'Stay';
+      const stateLabel = isCheckin ? 'Check-in' : isCheckout ? 'Check-out' : isInRange ? 'Stay night' : isBlocked ? 'Blocked' : isPast ? 'Past' : availabilityLoaded ? 'Available' : 'Availability unavailable';
+      button.setAttribute('aria-label', `${value}, ${stateLabel}`);
       button.addEventListener('click', () => chooseDate(value));
       days.append(button);
     }
@@ -116,6 +130,12 @@
 
   function render() {
     monthsRoot.replaceChildren(monthGrid(cursor), monthGrid(new Date(cursor.getFullYear(), cursor.getMonth() + 1, 1)));
+    if (checkin.value && checkout.value && checkout.value > checkin.value) {
+      const nights = Math.round((parse(checkout.value) - parse(checkin.value)) / 86400000);
+      selectionSummary.textContent = `${nights} night${nights === 1 ? '' : 's'} · Check in ${shortDate.format(parse(checkin.value))} · Check out ${shortDate.format(parse(checkout.value))}`;
+    } else {
+      selectionSummary.textContent = '';
+    }
   }
 
   root.querySelector('[data-calendar-prev]').addEventListener('click', () => {
