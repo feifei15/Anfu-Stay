@@ -1,6 +1,7 @@
 import crypto from "node:crypto";
 import { getAdminCalendar, updateAdminCalendar } from "../lib/booking-db.mjs";
-import { getHongKongAdminCalendar, updateHongKongAdminCalendar } from "../lib/booking-db-hk.mjs";
+import { getHongKongAdminCalendar, importHongKongPriceLabsPrices, updateHongKongAdminCalendar } from "../lib/booking-db-hk.mjs";
+import { getHongKongPriceLabsPrices } from "../lib/pricelabs.mjs";
 
 function sendJson(response, status, body) {
   response.status(status).setHeader("Content-Type", "application/json");
@@ -56,6 +57,12 @@ export default async function adminCalendar(request, response) {
       const weeklyRates = Array.isArray(body?.weeklyRates) ? body.weeklyRates.map(Number) : [];
       if (!validDate(start) || !validDate(end) || end <= start) return sendJson(response, 400, { error: "Invalid date range." });
       if (!validLocation(location)) return sendJson(response, 400, { error: "Invalid location." });
+      if (action === "sync_pricelabs") {
+        if (location !== "hk") return sendJson(response, 400, { error: "PriceLabs sync is only configured for Hong Kong." });
+        const prices = await getHongKongPriceLabsPrices({ start, end });
+        const imported = await importHongKongPriceLabsPrices({ prices });
+        return sendJson(response, 200, { saved: true, location, imported, received: prices.length, start, end });
+      }
       const roomIds = location === "hk" ? ["hk-standard"] : ["standard"];
       if (["set_price", "clear_price", "set_weekly_prices"].includes(action) && !roomIds.includes(roomId)) {
         return sendJson(response, 400, { error: "Invalid rate plan." });
@@ -80,6 +87,10 @@ export default async function adminCalendar(request, response) {
     return sendJson(response, 405, { error: "Method not allowed." });
   } catch (error) {
     console.error("Admin calendar request failed", error);
+    const message = String(error?.message || "");
+    if (message.startsWith("PriceLabs") || message.startsWith("PRICELABS_") || message === "Unable to reach PriceLabs.") {
+      return sendJson(response, 502, { error: message });
+    }
     return sendJson(response, 500, { error: "Unable to update the booking calendar." });
   }
 }
