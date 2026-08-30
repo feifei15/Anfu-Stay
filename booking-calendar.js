@@ -39,7 +39,10 @@
       const button = document.createElement('button');
       button.type = 'button';
       button.className = 'calendar-day';
-      button.textContent = day;
+      const dayNumber = document.createElement('span');
+      dayNumber.className = 'calendar-day-number';
+      dayNumber.textContent = day;
+      button.append(dayNumber);
       button.dataset.date = value;
       const isPast = date < today;
       const isBlocked = blocked.has(value);
@@ -48,6 +51,12 @@
       button.classList.toggle('blocked', isBlocked);
       button.classList.toggle('unavailable', !isPast && !isBlocked && !availabilityLoaded);
       button.classList.toggle('available', !isPast && !isBlocked && availabilityLoaded);
+      if (!isPast && availabilityLoaded) {
+        const dayStatus = document.createElement('span');
+        dayStatus.className = 'calendar-day-status';
+        dayStatus.textContent = isBlocked ? 'Blocked' : 'Available';
+        button.append(dayStatus);
+      }
       if (value === checkin.value || value === checkout.value) button.classList.add('selected');
       if (checkin.value && checkout.value && value > checkin.value && value < checkout.value) button.classList.add('in-range');
       button.setAttribute('aria-label', `${value}, ${isBlocked ? 'Blocked' : isPast ? 'Past' : availabilityLoaded ? 'Available' : 'Availability unavailable'}`);
