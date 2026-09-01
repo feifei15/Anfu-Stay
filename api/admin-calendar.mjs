@@ -54,9 +54,22 @@ export default async function adminCalendar(request, response) {
       const location = String(body?.location || "sh");
       const roomId = String(body?.roomId || (location === "hk" ? "hk-standard" : "standard"));
       const rate = Number(body?.rate ?? body?.rateCny ?? body?.rateUsd);
+      const cleaningFee = Number(body?.cleaningFee);
       const weeklyRates = Array.isArray(body?.weeklyRates) ? body.weeklyRates.map(Number) : [];
-      if (!validDate(start) || !validDate(end) || end <= start) return sendJson(response, 400, { error: "Invalid date range." });
       if (!validLocation(location)) return sendJson(response, 400, { error: "Invalid location." });
+      if (action === "set_cleaning_fee") {
+        const maximumFee = location === "hk" ? 10000 : 100000;
+        if (!Number.isInteger(cleaningFee) || cleaningFee < 0 || cleaningFee > maximumFee) {
+          return sendJson(response, 400, { error: `Enter a valid cleaning fee in ${location === "hk" ? "USD" : "CNY"}.` });
+        }
+        if (location === "hk") {
+          await updateHongKongAdminCalendar({ action, cleaningFee });
+        } else {
+          await updateAdminCalendar({ action, cleaningFee });
+        }
+        return sendJson(response, 200, { saved: true, location, cleaningFee });
+      }
+      if (!validDate(start) || !validDate(end) || end <= start) return sendJson(response, 400, { error: "Invalid date range." });
       if (action === "sync_pricelabs") {
         if (location !== "hk") return sendJson(response, 400, { error: "PriceLabs sync is only configured for Hong Kong." });
         const prices = await getHongKongPriceLabsPrices({ start, end });

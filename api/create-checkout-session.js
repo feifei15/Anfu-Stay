@@ -10,7 +10,6 @@ const ROOMS = Object.freeze({
   },
 });
 
-const CLEANING_FEE_CNY = 280;
 const MAXIMUM_NIGHTS = 90;
 const ALLOWED_PRODUCTION_HOSTS = new Set(["anfustay.com", "www.anfustay.com"]);
 
@@ -43,7 +42,7 @@ function checkoutBaseUrl(request) {
   return `${isLocal ? "http" : "https"}://${host}`;
 }
 
-function stripeParameters({ room, roomId, checkin, checkout, guests, nights, accommodationTotalCny, holdId, baseUrl }) {
+export function stripeParameters({ room, roomId, checkin, checkout, guests, nights, accommodationTotalCny, cleaningFeeCny, holdId, baseUrl }) {
   const parameters = new URLSearchParams();
   parameters.set("mode", "payment");
   parameters.set("locale", "auto");
@@ -62,10 +61,12 @@ function stripeParameters({ room, roomId, checkin, checkout, guests, nights, acc
     `${checkin} to ${checkout} · ${guests} guest${guests === 1 ? "" : "s"}`,
   );
 
-  parameters.set("line_items[1][quantity]", "1");
-  parameters.set("line_items[1][price_data][currency]", "cny");
-  parameters.set("line_items[1][price_data][unit_amount]", String(CLEANING_FEE_CNY * 100));
-  parameters.set("line_items[1][price_data][product_data][name]", "Cleaning fee");
+  if (cleaningFeeCny > 0) {
+    parameters.set("line_items[1][quantity]", "1");
+    parameters.set("line_items[1][price_data][currency]", "cny");
+    parameters.set("line_items[1][price_data][unit_amount]", String(cleaningFeeCny * 100));
+    parameters.set("line_items[1][price_data][product_data][name]", "Cleaning fee");
+  }
 
   parameters.set("metadata[room_id]", roomId);
   parameters.set("metadata[checkin]", checkin);
@@ -151,6 +152,7 @@ export default async function createCheckoutSession(request, response) {
       body: stripeParameters({
         room, roomId, checkin, checkout, guests, nights,
         accommodationTotalCny: quote.accommodationTotalCny,
+        cleaningFeeCny: quote.cleaningFeeCny,
         holdId, baseUrl,
       }),
     });
