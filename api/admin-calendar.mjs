@@ -2,6 +2,7 @@ import crypto from "node:crypto";
 import { getAdminCalendar, updateAdminCalendar } from "../lib/booking-db.mjs";
 import { getHongKongAdminCalendar, importHongKongPriceLabsPrices, updateHongKongAdminCalendar } from "../lib/booking-db-hk.mjs";
 import { getHongKongPriceLabsPrices } from "../lib/pricelabs.mjs";
+import { getLasVegasAdminCalendar, updateLasVegasAdminCalendar } from "../lib/booking-db-lv.mjs";
 
 function sendJson(response, status, body) {
   response.status(status).setHeader("Content-Type", "application/json");
@@ -28,7 +29,7 @@ function authorized(request) {
 }
 
 function validDate(value) { return /^\d{4}-\d{2}-\d{2}$/.test(value || ""); }
-function validLocation(value) { return value === "sh" || value === "hk"; }
+function validLocation(value) { return value === "sh" || value === "hk" || value === "lv"; }
 
 export default async function adminCalendar(request, response) {
   if (!authorized(request)) {
@@ -41,9 +42,8 @@ export default async function adminCalendar(request, response) {
       const location = String(request.query?.location || "sh");
       if (!validDate(start) || !validDate(end)) return sendJson(response, 400, { error: "Invalid date range." });
       if (!validLocation(location)) return sendJson(response, 400, { error: "Invalid location." });
-      const calendar = location === "hk"
-        ? await getHongKongAdminCalendar(start, end)
-        : await getAdminCalendar(start, end);
+      const calendar = location === "hk" ? await getHongKongAdminCalendar(start, end)
+        : location === "lv" ? await getLasVegasAdminCalendar(start, end) : await getAdminCalendar(start, end);
       return sendJson(response, 200, { location, ...calendar });
     }
     if (request.method === "POST") {
@@ -52,18 +52,20 @@ export default async function adminCalendar(request, response) {
       const start = String(body?.start || "");
       const end = String(body?.end || "");
       const location = String(body?.location || "sh");
-      const roomId = String(body?.roomId || (location === "hk" ? "hk-standard" : "standard"));
+      const roomId = String(body?.roomId || (location === "hk" ? "hk-standard" : location === "lv" ? "lv-standard" : "standard"));
       const rate = Number(body?.rate ?? body?.rateCny ?? body?.rateUsd);
       const cleaningFee = Number(body?.cleaningFee);
       const weeklyRates = Array.isArray(body?.weeklyRates) ? body.weeklyRates.map(Number) : [];
       if (!validLocation(location)) return sendJson(response, 400, { error: "Invalid location." });
       if (action === "set_cleaning_fee") {
-        const maximumFee = location === "hk" ? 10000 : 100000;
+        const maximumFee = location === "sh" ? 100000 : 10000;
         if (!Number.isInteger(cleaningFee) || cleaningFee < 0 || cleaningFee > maximumFee) {
-          return sendJson(response, 400, { error: `Enter a valid cleaning fee in ${location === "hk" ? "USD" : "CNY"}.` });
+          return sendJson(response, 400, { error: `Enter a valid cleaning fee in ${location === "sh" ? "CNY" : "USD"}.` });
         }
         if (location === "hk") {
           await updateHongKongAdminCalendar({ action, cleaningFee });
+        } else if (location === "lv") {
+          await updateLasVegasAdminCalendar({ action, cleaningFee });
         } else {
           await updateAdminCalendar({ action, cleaningFee });
         }
@@ -76,21 +78,23 @@ export default async function adminCalendar(request, response) {
         const imported = await importHongKongPriceLabsPrices({ prices });
         return sendJson(response, 200, { saved: true, location, imported, received: prices.length, start, end });
       }
-      const roomIds = location === "hk" ? ["hk-standard"] : ["standard"];
+      const roomIds = location === "hk" ? ["hk-standard"] : location === "lv" ? ["lv-standard"] : ["standard"];
       if (["set_price", "clear_price", "set_weekly_prices"].includes(action) && !roomIds.includes(roomId)) {
         return sendJson(response, 400, { error: "Invalid rate plan." });
       }
-      const maximumRate = location === "hk" ? 10000 : 100000;
+      const maximumRate = location === "sh" ? 100000 : 10000;
       if (action === "set_price" && (!Number.isInteger(rate) || rate < 1 || rate > maximumRate)) {
-        return sendJson(response, 400, { error: `Enter a valid nightly price in ${location === "hk" ? "USD" : "CNY"}.` });
+        return sendJson(response, 400, { error: `Enter a valid nightly price in ${location === "sh" ? "CNY" : "USD"}.` });
       }
       if (action === "set_weekly_prices" &&
         (weeklyRates.length !== 7 || weeklyRates.some((value) => !Number.isInteger(value) || value < 1 || value > maximumRate))) {
-        return sendJson(response, 400, { error: `Enter all seven valid daily prices in ${location === "hk" ? "USD" : "CNY"}.` });
+        return sendJson(response, 400, { error: `Enter all seven valid daily prices in ${location === "sh" ? "CNY" : "USD"}.` });
       }
       const note = String(body?.note || "").slice(0, 200);
       if (location === "hk") {
         await updateHongKongAdminCalendar({ action, start, end, roomId, rateUsd: rate, note, weeklyRates });
+      } else if (location === "lv") {
+        await updateLasVegasAdminCalendar({ action, start, end, roomId, rateUsd: rate, note, weeklyRates });
       } else {
         await updateAdminCalendar({ action, start, end, roomId, rateCny: rate, note, weeklyRates });
       }
