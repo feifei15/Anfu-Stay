@@ -1,6 +1,13 @@
 import crypto from "node:crypto";
 import { confirmBooking, extendPendingHold, releaseHold } from "../lib/booking-db.mjs";
 import { confirmHongKongBooking, extendHongKongPendingHold, releaseHongKongHold } from "../lib/booking-db-hk.mjs";
+import { confirmLasVegasBooking, extendLasVegasPendingHold, releaseLasVegasHold } from "../lib/booking-db-lv.mjs";
+
+function bookingHandlers(location) {
+  if (location === "hong_kong") return { confirm: confirmHongKongBooking, extend: extendHongKongPendingHold, release: releaseHongKongHold };
+  if (location === "las_vegas") return { confirm: confirmLasVegasBooking, extend: extendLasVegasPendingHold, release: releaseLasVegasHold };
+  return { confirm: confirmBooking, extend: extendPendingHold, release: releaseHold };
+}
 
 const SIGNATURE_TOLERANCE_SECONDS = 300;
 
@@ -65,9 +72,9 @@ export default async function stripeWebhook(request, response) {
   if (event.type === "checkout.session.completed" || event.type === "checkout.session.async_payment_succeeded") {
     const session = event.data.object;
     if (event.type === "checkout.session.async_payment_succeeded" || session.payment_status === "paid") {
-      await (session.metadata?.location === "hong_kong" ? confirmHongKongBooking(session) : confirmBooking(session));
+      await bookingHandlers(session.metadata?.location).confirm(session);
     } else if (session.metadata?.hold_id) {
-      await (session.metadata?.location === "hong_kong" ? extendHongKongPendingHold(session.metadata.hold_id) : extendPendingHold(session.metadata.hold_id));
+      await bookingHandlers(session.metadata?.location).extend(session.metadata.hold_id);
     }
     console.log("booking_payment_confirmed", {
       eventId: event.id,
@@ -86,7 +93,7 @@ export default async function stripeWebhook(request, response) {
     });
   } else if (event.type === "checkout.session.async_payment_failed") {
     const session = event.data.object;
-    if (session.metadata?.hold_id) await (session.metadata?.location === "hong_kong" ? releaseHongKongHold(session.metadata.hold_id) : releaseHold(session.metadata.hold_id));
+    if (session.metadata?.hold_id) await bookingHandlers(session.metadata?.location).release(session.metadata.hold_id);
     console.warn("booking_payment_failed", {
       eventId: event.id,
       checkoutSessionId: session.id,

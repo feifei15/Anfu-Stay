@@ -2,7 +2,8 @@ import crypto from "node:crypto";
 import { getAdminCalendar, updateAdminCalendar } from "../lib/booking-db.mjs";
 import { getHongKongAdminCalendar, importHongKongPriceLabsPrices, updateHongKongAdminCalendar } from "../lib/booking-db-hk.mjs";
 import { getHongKongPriceLabsPrices } from "../lib/pricelabs.mjs";
-import { getLasVegasAdminCalendar, updateLasVegasAdminCalendar } from "../lib/booking-db-lv.mjs";
+import { getLasVegasAdminCalendar, importLasVegasPriceLabsPrices, updateLasVegasAdminCalendar } from "../lib/booking-db-lv.mjs";
+import { getLasVegasPriceLabsPrices } from "../lib/pricelabs.mjs";
 
 function sendJson(response, status, body) {
   response.status(status).setHeader("Content-Type", "application/json");
@@ -73,9 +74,9 @@ export default async function adminCalendar(request, response) {
       }
       if (!validDate(start) || !validDate(end) || end <= start) return sendJson(response, 400, { error: "Invalid date range." });
       if (action === "sync_pricelabs") {
-        if (location !== "hk") return sendJson(response, 400, { error: "PriceLabs sync is only configured for Hong Kong." });
-        const prices = await getHongKongPriceLabsPrices({ start, end });
-        const imported = await importHongKongPriceLabsPrices({ prices });
+        if (location === "sh") return sendJson(response, 400, { error: "PriceLabs sync is configured for Hong Kong and Las Vegas." });
+        const prices = location === "lv" ? await getLasVegasPriceLabsPrices({ start, end }) : await getHongKongPriceLabsPrices({ start, end });
+        const imported = location === "lv" ? await importLasVegasPriceLabsPrices({ prices }) : await importHongKongPriceLabsPrices({ prices });
         return sendJson(response, 200, { saved: true, location, imported, received: prices.length, start, end });
       }
       const roomIds = location === "hk" ? ["hk-standard"] : location === "lv" ? ["lv-standard"] : ["standard"];
