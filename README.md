@@ -17,4 +17,6 @@ The authenticated calendar at `/admin/` manages Shanghai, Hong Kong, and Las Veg
 
 Required Vercel environment variables are listed in `.env.example`. The PostgreSQL tables and indexes are created automatically on the first calendar or booking request.
 
+Guest inquiries submitted at `/contact/` are stored in PostgreSQL and appear in the authenticated `/admin/` dashboard. The inquiry table and index are also created automatically on the first submission or admin request.
+
 Las Vegas availability can include Airbnb reservations through `AIRBNB_LV_ICAL_URL`. PriceLabs syncing uses the shared `PRICELABS_API_KEY` plus `PRICELABS_VEGAS_LISTING_ID` and `PRICELABS_VEGAS_PMS`. Open `/admin/?location=lv` and select **Sync PriceLabs prices** after those variables are configured.

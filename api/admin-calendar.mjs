@@ -4,6 +4,7 @@ import { getHongKongAdminCalendar, importHongKongPriceLabsPrices, updateHongKong
 import { getHongKongPriceLabsPrices } from "../lib/pricelabs.mjs";
 import { getLasVegasAdminCalendar, importLasVegasPriceLabsPrices, updateLasVegasAdminCalendar } from "../lib/booking-db-lv.mjs";
 import { getLasVegasPriceLabsPrices } from "../lib/pricelabs.mjs";
+import { getInquiries } from "../lib/contact-inquiries.mjs";
 
 function sendJson(response, status, body) {
   response.status(status).setHeader("Content-Type", "application/json");
@@ -43,9 +44,12 @@ export default async function adminCalendar(request, response) {
       const location = String(request.query?.location || "sh");
       if (!validDate(start) || !validDate(end)) return sendJson(response, 400, { error: "Invalid date range." });
       if (!validLocation(location)) return sendJson(response, 400, { error: "Invalid location." });
-      const calendar = location === "hk" ? await getHongKongAdminCalendar(start, end)
-        : location === "lv" ? await getLasVegasAdminCalendar(start, end) : await getAdminCalendar(start, end);
-      return sendJson(response, 200, { location, ...calendar });
+      const [calendar, inquiries] = await Promise.all([
+        location === "hk" ? getHongKongAdminCalendar(start, end)
+          : location === "lv" ? getLasVegasAdminCalendar(start, end) : getAdminCalendar(start, end),
+        getInquiries(),
+      ]);
+      return sendJson(response, 200, { location, ...calendar, inquiries });
     }
     if (request.method === "POST") {
       const body = typeof request.body === "string" ? JSON.parse(request.body) : request.body;
